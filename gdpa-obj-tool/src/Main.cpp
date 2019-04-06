@@ -108,17 +108,17 @@ int HandleDecompress(const Arguments & args)
     GpdaObjFile gof;
 
     cout << "Input OBJ file: " << args.fileParam1 << endl;
-    if (!gof.LoadObj(&args.fileParam1))
+    if (!gof.LoadObj(args.fileParam1))
     {
         cout << "[ERROR] Unable to parse input file: " << args.fileParam1 << endl;
         return -1;
     }
 
-    cout << "\tTotal instructions: " << gof.instructions()->size() << endl;
-    cout << "\tTotal text lines: " << (unsigned)gof.textLines() << endl;
+    cout << "\tTotal instructions: " << gof.instructions.size() << endl;
+    cout << "\tTotal text lines: " << gof.text.size() << endl;
 
     cout << "\tWriting text script: " << args.fileParam2 << endl;
-    if(!gof.WriteTxt(&args.fileParam2))
+    if(!gof.WriteTxt(args.fileParam2))
     {
         cout << "[WARNING] Wasn't able to write text script." << endl;
         return -1;
@@ -134,17 +134,17 @@ int HandleCompress(const Arguments & args)
     GpdaObjFile gof;
 
     cout << "Input text script file: " << args.fileParam1 << endl;
-    if (!gof.LoadTxt(&args.fileParam1))
+    if (!gof.LoadTxt(args.fileParam1))
     {
         cout << "[ERROR] Unable to parse input file: " << args.fileParam1 << endl;
         return -1;
     }
 
-    cout << "\tTotal instructions: " << gof.instructions()->size() << endl;
-    cout << "\tTotal text lines: " << (unsigned)gof.textLines() << endl;
+    cout << "\tTotal instructions: " << gof.instructions.size() << endl;
+    cout << "\tTotal text lines: " << gof.text.size() << endl;
 
     cout << "\tWriting OBJ file: " << args.fileParam2 << endl;
-    if(!gof.WriteObj(&args.fileParam2))
+    if(!gof.WriteObj(args.fileParam2))
     {
         cout << "[WARNING] Wasn't able to write OBJ file." << endl;
         return -1;
@@ -157,27 +157,16 @@ int HandleCompress(const Arguments & args)
 void PrintActionsHelp()
 {
     cout << "\nActions:" << endl;
-    cout << "\t[1] - Skip game text" << endl;
-    cout << "\t[2] - Merge game text with translation line" << endl;
-    cout << "\t[3] - Select previous translation line" << endl;
-    cout << "\t[4] - Select next translation line" << endl;
-    cout << "\t[5] - Auto-merge onwards" << endl;
-    cout << "\t[6] - Enter translation line manually" << endl;
-    cout << "\t[7] - Save text script" << endl;
+    cout << "\t[1] - Next game text" << endl;
+    cout << "\t[2] - Merge game text with translation text" << endl;
+    cout << "\t[3] - Auto-merge onwards" << endl;
+    cout << "\t[4] - Previous game text" << endl;
+    cout << "\t[5] - Next translation text" << endl;
+    cout << "\t[6] - Previous translation text" << endl;
+    cout << "\t[7] - Enter translation line manually" << endl;
+    cout << "\t[8] - Save script" << endl;
     cout << "\t[0] - Show this help message" << endl;
 }
-
-// todo????
-/*
-string * GetNextTranslationLine(const GpdaObjFile & gof, uint16_t currentLine)
-{
-    
-    for(uint16_t lineCounter = 0, i = 0; i < gof.instructions().size(); i++)
-    {
-        if (gof.instruction)
-    }
-    return "";
-}*/
 
 int HandleTranslate(const Arguments & args)
 {
@@ -185,30 +174,35 @@ int HandleTranslate(const Arguments & args)
     TranslationFile tf;
 
     cout << "Input text script file: " << args.fileParam1 << endl;
-    if (!gof.LoadTxt(&args.fileParam1))
+    if (!gof.LoadTxt(args.fileParam1))
     {
         cout << "[ERROR] Unable to parse input file: " << args.fileParam1 << endl;
         return -1;
     }
 
-    cout << "\tTotal instructions: " << gof.instructions()->size() << endl;
-    cout << "\tTotal text lines: " << (unsigned)gof.textLines() << endl;
+    cout << "\tTotal instructions: " << gof.instructions.size() << endl;
+    cout << "\tTotal text lines: " << gof.text.size() << endl;
 
     cout << "\tInput translation file: " << args.fileParam2 << endl;
-    if (!tf.Load(&args.fileParam2))
+    if (!tf.Load(args.fileParam2))
     {
         cout << "[ERROR] Unable to parse translation file: " << args.fileParam2 << endl;
         return -1;
     }
 
-    cout << "\tTotal translation lines: " << tf.lines()->size() << endl;
+    cout << "\tTotal translation lines: " << tf.text.size() << endl;
 
     PrintActionsHelp();
 
+    uint16_t gameTIndex = 0;
+    uint16_t trnsTIndex = 0;
+
     while(true)
     {
-        cout << "Game text:";
-        cout << "Trn. line:";
+        cout << "\nGame text (" << (unsigned)(gameTIndex + 1) << "/" << gof.text.size()
+             << ", " << gof.text.size() - gameTIndex << " left): " << *gof.text[gameTIndex] << endl;
+        cout << "Trns text (" << (unsigned)(trnsTIndex + 1) << "/" << tf.text.size()
+             << ", " << tf.text.size() - trnsTIndex  << " left): " << tf.text[trnsTIndex] << endl;
 
         string input;
         cout << ">: ";
@@ -225,37 +219,86 @@ int HandleTranslate(const Arguments & args)
             continue;
         }
 
+        // TODO move incerements and decrements into separate functions
         if (input[0] == '0')
         {
             PrintActionsHelp();
         }
         else if (input[0] == '1')
         {
-
+            if (gameTIndex + 1 < gof.text.size())
+            {
+                gameTIndex++;
+            }
         }
         else if (input[0] == '2')
         {
-            
+            *gof.text[gameTIndex] = tf.text[trnsTIndex];
+
+            if (gameTIndex + 1 < gof.text.size())
+            {
+                gameTIndex++;
+            }
+
+            if (trnsTIndex + 1 < tf.text.size())
+            {
+                trnsTIndex++;
+            }
         }
         else if (input[0] == '3')
         {
-            
+            if (tf.text.size() - trnsTIndex == gof.text.size() - gameTIndex)
+            {
+                for (size_t i = 0; i < tf.text.size() - trnsTIndex; i++)
+                {
+                    *gof.text[gof.text.size() - 1 - i] = tf.text[tf.text.size() - 1 - i];
+                }
+
+                gameTIndex = gof.text.size() -1;
+                trnsTIndex = tf.text.size() - 1;
+            }
+            else
+            {
+                cout << "Number of text lines left in game and translation doesn't match." << endl;
+            }
         }
         else if (input[0] == '4')
         {
-            
+            if (gameTIndex - 1 >= 0)
+            {
+                gameTIndex--;
+            }
         }
         else if (input[0] == '5')
         {
-            
+            if (trnsTIndex + 1 < tf.text.size())
+            {
+                trnsTIndex++;
+            }
         }
         else if (input[0] == '6')
         {
-            
+            if (trnsTIndex - 1 >= 0)
+            {
+                trnsTIndex--;
+            }
         }
         else if (input[0] == '7')
         {
-            
+            cout << "Enter text: ";
+            getline(cin, input);
+
+            *gof.text[gameTIndex] = input;
+
+            if (gameTIndex + 1 < gof.text.size())
+            {
+                gameTIndex++;
+            }
+        }
+        else if (input[0] == '8')
+        {
+            gof.WriteTxt(args.fileParam1);
+            cout << "Saved as " << args.fileParam1 << "." << endl;
         }
         else
         {
@@ -265,6 +308,8 @@ int HandleTranslate(const Arguments & args)
 
     return 0;
 }
+
+// Main
 int main(int argc, char **argv)
 {
     // Check that the passed arguments are valid

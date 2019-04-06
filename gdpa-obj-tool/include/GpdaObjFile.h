@@ -27,24 +27,20 @@ namespace gpdaobjtool
     class GpdaObjFile
     {
     public:
+        std::vector<IInstruction*> instructions;
+        std::vector<std::string*> text;
+
         GpdaObjFile();
         ~GpdaObjFile();
 
-        bool LoadObj(const std::string * filepath);
-        bool LoadTxt(const std::string * filepath);
+        bool LoadObj(const std::string & filepath);
+        bool LoadTxt(const std::string & filepath);
 
-        bool WriteTxt(const std::string * filepath) const;
-        bool WriteObj(const std::string * filepath) const;
-
-        inline const std::vector<IInstruction*>* instructions() const { return &_instructions; }
-        inline uint16_t textLines() const { return _textLines; }
+        bool WriteTxt(const std::string & filepath) const;
+        bool WriteObj(const std::string & filepath) const;
 
     private:
-        std::string _filepath;
         BVec _header;
-        std::vector<IInstruction*> _instructions;
-        uint16_t _textLines = 0;
-        void _Reset();
     };
 }
 

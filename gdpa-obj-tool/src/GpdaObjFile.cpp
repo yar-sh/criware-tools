@@ -14,12 +14,9 @@ using namespace gpdaobjtool;
 GpdaObjFile::GpdaObjFile() {}
 GpdaObjFile::~GpdaObjFile() {}
 
-bool GpdaObjFile::LoadObj(const string * filepath)
+bool GpdaObjFile::LoadObj(const string & filepath)
 {
-    _Reset();
-    _filepath = *filepath;
-
-    ifstream file(_filepath, ios::in | ios::binary);
+    ifstream file(filepath, ios::in | ios::binary);
     if(file.bad())
     {
         return false;
@@ -99,21 +96,21 @@ bool GpdaObjFile::LoadObj(const string * filepath)
         }
 
         i->ParseRaw(data);
-        _textLines += i->GetText().size();
+        for(string * s : i->GetText())
+        {
+            text.push_back(s);
+        }
 
-        _instructions.push_back(i);
+        instructions.push_back(i);
     }
 
     file.close();
     return true;
 }
 
-bool GpdaObjFile::LoadTxt(const string * filepath)
+bool GpdaObjFile::LoadTxt(const string & filepath)
 {
-    _Reset();
-    _filepath = *filepath;
-
-    ifstream file(_filepath, ios::in | ios::binary);
+    ifstream file(filepath, ios::in);
     if(file.bad())
     {
         return false;
@@ -179,9 +176,13 @@ bool GpdaObjFile::LoadTxt(const string * filepath)
             }
 
             i->ParseScript(script);
-            _textLines += i->GetText().size();
 
-            _instructions.push_back(i);
+            for(string * s : i->GetText())
+            {
+                text.push_back(s);
+            }
+
+            instructions.push_back(i);
 
             inInstruction = false;
             script.clear();
@@ -219,9 +220,9 @@ bool GpdaObjFile::LoadTxt(const string * filepath)
     return true;
 }
 
-bool GpdaObjFile::WriteObj(const string * filepath) const
+bool GpdaObjFile::WriteObj(const string & filepath) const
 {
-    ofstream file(*filepath, ios::out | ios::binary);
+    ofstream file(filepath, ios::out | ios::binary);
     if(file.bad())
     {
         return false;
@@ -232,7 +233,7 @@ bool GpdaObjFile::WriteObj(const string * filepath) const
         file.put(c);
     }
 
-    for(const IInstruction * i : _instructions)
+    for(const IInstruction * i : instructions)
     {
         BVec data = i->ToRaw();
         for (uint8_t c : data)
@@ -245,9 +246,9 @@ bool GpdaObjFile::WriteObj(const string * filepath) const
     return true;
 }
 
-bool GpdaObjFile::WriteTxt(const string * filepath) const
+bool GpdaObjFile::WriteTxt(const string & filepath) const
 {
-    ofstream file(*filepath, ios::out);
+    ofstream file(filepath, ios::out);
     if(file.bad())
     {
         return false;
@@ -255,7 +256,7 @@ bool GpdaObjFile::WriteTxt(const string * filepath) const
 
     file << "{HEADER} " << _header.ToHexString() << endl << endl;
 
-    for(IInstruction * i : _instructions)
+    for(IInstruction * i : instructions)
     {
         file << "{INSTRUCTION_BEGIN} " << Utils::ValueToHexStr(i->operatorType(), 4) << endl;
 
@@ -298,6 +299,8 @@ bool GpdaObjFile::WriteTxt(const string * filepath) const
             ot == 0x02C8 || ot == 0x00CE ||
             ot == 0x02C2 || ot == 0x02C1)
         {
+            // This is mostly just for debug. I used it to see which operation codes
+            //   I didn't know about of yet to see if they contain any game text
         }
         else
         {
@@ -316,12 +319,4 @@ bool GpdaObjFile::WriteTxt(const string * filepath) const
 
     file.close();
     return true;
-}
-
-void GpdaObjFile::_Reset()
-{
-    _filepath.clear();
-    _header.clear();
-    _instructions.clear();
-    _textLines = 0;
 }
