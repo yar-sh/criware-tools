@@ -12,7 +12,6 @@ As a nice addition, `topographer` has a feature to merge existing translation fr
 #### Compiling
 - Linux: `make clean && make all`. This will get you an executable file `./build/topographer.run`.
 - Windows: Either use bash subsystem or Visual Studio with project in `./vs`. Visual Studio will build an executable file `./build/topographer-xXX.exe`, where XX is either `86` or `64`.
-- I'll post Release some time in the future.
 
 #### Usage
 - `topographer <BIN_file> <output_directory>`

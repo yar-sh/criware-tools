@@ -27,7 +27,7 @@ namespace topographer
         // Loads a translation file
         //   filename, string, the ifle name of the translation file
         // Returns: bool, true if loaded successfully, false otherwise
-        bool Load(const std::string & filepath);
+        bool Load(const std::string & filepath) override;
 
     private:
         std::string _filepath;

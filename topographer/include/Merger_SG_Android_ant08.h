@@ -26,7 +26,7 @@ namespace topographer
         // Merges two StringLists into one
         //   into, &StringList, original and also output StringList (JAP)
         //   from, &StringList, list with translation (ENG)
-        void Merge(StringList & into, const StringList & from);
+        void Merge(StringList & into, const StringList & from) override;
 
     private:
         GameString _AssembleGameString(const GameString & inJap, const GameString & inEng) const;
