@@ -20,6 +20,23 @@ BVec::BVec(BVec::const_iterator begin, size_t length)
 
 BVec::~BVec() {}
 
+#if _MSC_VER >= 1900
+string BVec::UTF16LEtoUTF8string() const
+{
+	size_t length = size();
+	u16string utf16(length / 2, ' ');
+	wstring_convert<codecvt_utf8_utf16<wchar_t>, wchar_t> codecvt;
+
+	for (size_t i = 0; i < length; i += 2)
+	{
+		utf16[i / 2] = ((char16_t)((this->at(i + 1) << 8) | (this->at(i) << 0)));
+	}
+
+	wstring t(utf16.begin(), utf16.end());
+
+	return codecvt.to_bytes(t);
+}
+#else
 string BVec::UTF16LEtoUTF8string() const
 {
     size_t length = size();
@@ -34,6 +51,25 @@ string BVec::UTF16LEtoUTF8string() const
     return codecvt.to_bytes(utf16);
 }
 
+#endif
+
+#if _MSC_VER >= 1900
+u16string BVec::UTF8toUTF16LEstring() const
+{
+	wstring_convert<codecvt_utf8_utf16<wchar_t>, wchar_t> convert;
+
+	wstring t = convert.from_bytes(string(begin(), end()));
+	u16string utf16(t.begin(), t.end());
+	u16string ret;
+
+	for (char16_t c : utf16)
+	{
+		ret.push_back((uint8_t)(c >> 8) | (uint16_t)(c << 8));
+	}
+
+	return ret;
+}
+#else
 u16string BVec::UTF8toUTF16LEstring() const
 {
     wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
@@ -48,12 +84,14 @@ u16string BVec::UTF8toUTF16LEstring() const
 
     return ret;
 }
+#endif
 
+#if _MSC_VER >= 1900
 void BVec::UTF16LEtoUTF8()
 {
     size_t length = size();
     u16string utf16(length / 2, ' ');
-    wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> codecvt;
+    wstring_convert<codecvt_utf8_utf16<wchar_t>, wchar_t> codecvt;
 
     for(size_t i = 0; i < length; i += 2)
     {
@@ -61,12 +99,50 @@ void BVec::UTF16LEtoUTF8()
     }
 
     clear();
-    for(uint8_t c : codecvt.to_bytes(utf16))
+	
+	wstring t(utf16.begin(), utf16.end());
+    for(uint8_t c : codecvt.to_bytes(t))
     {
         push_back(c);
     }
 }
+#else
+void BVec::UTF16LEtoUTF8()
+{
+	size_t length = size();
+	u16string utf16(length / 2, ' ');
+	wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> codecvt;
 
+	for (size_t i = 0; i < length; i += 2)
+	{
+		utf16[i / 2] = ((char16_t)((this->at(i + 1) << 8) | (this->at(i) << 0)));
+	}
+
+	clear();
+	for (uint8_t c : codecvt.to_bytes(utf16))
+	{
+		push_back(c);
+	}
+}
+#endif
+
+#if _MSC_VER >= 1900
+void BVec::UTF8toUTF16LE()
+{
+	wstring_convert<codecvt_utf8_utf16<wchar_t>, wchar_t> convert;
+
+	wstring t = convert.from_bytes(string(begin(), end()));
+	u16string utf16(t.begin(), t.end());
+
+	clear();
+
+	for (char16_t c : utf16)
+	{
+		push_back((uint8_t)(c));
+		push_back((uint8_t)(c >> 8));
+	}
+}
+#else
 void BVec::UTF8toUTF16LE()
 {
     wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
@@ -81,6 +157,7 @@ void BVec::UTF8toUTF16LE()
         push_back((uint8_t)(c >> 8));
     }
 }
+#endif
 
 string BVec::ToHexString() const
 {

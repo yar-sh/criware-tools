@@ -6,10 +6,15 @@
 //                                                           //
 ///////////////////////////////////////////////////////////////
 
-#include "GdpaObjTool.h"
+#include "GpdaObjTool.h"
 #include <iostream>
 #include <experimental/filesystem>
 #include <fstream>
+
+#ifdef _WIN32
+#include<stdio.h>
+#include<windows.h>
+#endif
 
 using namespace std;
 using namespace gpdaobjtool;
@@ -29,14 +34,14 @@ bool ParseArguments(int argc, char **argv, Arguments & args)
         cout << "implementation based on your specific needs." << endl;
         cout << endl << endl;*/
         cout << "Usage:" << endl;
-        cout << "\tgdpa-obj-unpacker d <obj_file> <text_script_file>" << endl;
-        cout << "\tgdpa-obj-unpacker d A01_07AA1.obj A01_07AA1.txt" << endl;
+        cout << "\tgpda-obj-unpacker d <obj_file> <text_script_file>" << endl;
+        cout << "\tgpda-obj-unpacker d A01_07AA1.obj A01_07AA1.txt" << endl;
         cout << "OR" << endl;
-        cout << "\tgdpa-obj-unpacker c <text_script_file> <obj_file>" << endl;
-        cout << "\tgdpa-obj-unpacker c A01_07AA1.txt A01_07AA1.obj" << endl;
+        cout << "\tgpda-obj-unpacker c <text_script_file> <obj_file>" << endl;
+        cout << "\tgpda-obj-unpacker c A01_07AA1.txt A01_07AA1.obj" << endl;
         cout << "OR" << endl;
-        cout << "\tgdpa-obj-unpacker t <text_script_file> <translation_file>" << endl;
-        cout << "\tgdpa-obj-unpacker t A01_07AA1.txt 00.txt" << endl;
+        cout << "\tgpda-obj-unpacker t <text_script_file> <translation_file>" << endl;
+        cout << "\tgpda-obj-unpacker t A01_07AA1.txt 00.txt" << endl;
         /*
         cout << endl;
         cout << "\tThis command would take string encoding rules from" << endl;
@@ -312,6 +317,10 @@ int HandleTranslate(const Arguments & args)
 // Main
 int main(int argc, char **argv)
 {
+#ifdef _WIN32
+	SetConsoleOutputCP(65001);
+#endif
+
     // Check that the passed arguments are valid
     Arguments args;
     if (!ParseArguments(argc, argv, args))

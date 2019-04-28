@@ -119,6 +119,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -135,6 +136,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -146,6 +148,7 @@
     <ClCompile Include="..\src\EncodingTable.cpp" />
     <ClCompile Include="..\src\GameString.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
+    <ClCompile Include="..\src\Merger_SG_Android_ant08.cpp" />
     <ClCompile Include="..\src\StringList.cpp" />
     <ClCompile Include="..\src\Translation_SG_Android_ant08.cpp" />
     <ClCompile Include="..\src\Utils.cpp" />
@@ -156,6 +159,7 @@
     <ClInclude Include="..\include\EncodingTable.h" />
     <ClInclude Include="..\include\GameString.h" />
     <ClInclude Include="..\include\ITranslation.h" />
+    <ClInclude Include="..\include\Merger_SG_Android_ant08.h" />
     <ClInclude Include="..\include\StringList.h" />
     <ClInclude Include="..\include\Topographer.h" />
     <ClInclude Include="..\include\Translation_SG_Android_ant08.h" />

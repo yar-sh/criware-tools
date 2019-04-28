@@ -1,4 +1,6 @@
 # topographer
+Re: Windows builds. I never developed this with Windows in mind. It does compile on Windows. But I'm not sure if it works. You should probably run this on a Linux machine or WLS.
+
 This is a tool for extracting strings from the BIN files of the PSP SciAdv games. The name `topographer` comes from the synonym to the word `Cartographer`, which is "a program designed to extract the script(s) from a file and dump them in such a way as to be easily inserted using Atlas" [(source)](https://www.romhacking.net/utilities/647/).
 
 Since I was unable to use `Cartographer` with SciAdv games (mainly, [Steins;Gate](https://github.com/HaselLoyance/steins-gate-psp-patch)), I wrote my own tool to do this.

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////
 //                                                           //
-//   GdpaObjTool.h                                           //
+//   GpdaObjTool.h                                           //
 //   HaselLoyance 2018-2019, Unlicense                       //
 //   https://github.com/HaselLoyance/criware-tools           //
 //                                                           //

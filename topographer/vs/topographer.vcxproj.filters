@@ -39,6 +39,9 @@
     <ClCompile Include="..\src\Writer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Merger_SG_Android_ant08.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\BinFile.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Merger_SG_Android_ant08.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

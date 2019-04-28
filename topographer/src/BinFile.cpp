@@ -34,7 +34,6 @@ bool BinFile::Load(const string & filepath)
         return false;
     }
 
-
     while(true)
     {
         uint8_t bytes[2];
